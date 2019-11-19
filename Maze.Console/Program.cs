@@ -1,5 +1,6 @@
 ﻿using Maze.Drawing;
 using MazeGenerator;
+using System.Collections.Generic;
 
 namespace Maze.Console
 {
@@ -7,21 +8,40 @@ namespace Maze.Console
     {
         static void Main(string[] args)
         {
-            var test = new Generator();
-            var maze = test.Generate(42, 42, GeneratorType.Split);
-            var img = MazeToImage.Convert(maze);
-            img.Save("zimgSplitMaze.jpg");
+            var cases = new List<Case> {
+                new Case { Width = 10, Height = 10, Repeat = 10000 },
+                new Case { Width = 100, Height = 50, Repeat = 2000 },
+                new Case { Width = 50, Height = 100, Repeat = 2000 },
+                new Case { Width = 100, Height = 100, Repeat = 1000 },
+                new Case { Width = 1000, Height = 1000, Repeat = 10 },
+            };
 
-            for (int i = 0; i <20; i++)
+            foreach (var item in cases)
             {
-                var mazeRandom = test.Generate(42, 42, GeneratorType.Random);
-                var imgRandomMaze = MazeToImage.Convert(mazeRandom, 8);
-                imgRandomMaze.Save($"zimgRandomMaze{i}.png");
-            }
+                var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            var fuckme = test.Generate(150, 150, GeneratorType.Random);
-            var fuckmeMaze = MazeToImage.Convert(fuckme, 8);
-            fuckmeMaze.Save($"zimgRandomMaze{42}.png");
+                for (int i = 0; i < item.Repeat; i++)
+                {
+                    var test = new Generator();
+                    var maze = test.Generate(item.Width, item.Height, GeneratorType.Random);
+                }
+
+                watch.Stop();
+                item.Result = watch.ElapsedMilliseconds;
+                System.Console.WriteLine(item);
+            }
+        }
+    }
+
+    class Case
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int Repeat { get; set; }
+        public long Result { get; set; }
+        public override string ToString()
+        {
+            return $"Test: {Width}x{Height} - {Repeat} time => {Result}";
         }
     }
 }
