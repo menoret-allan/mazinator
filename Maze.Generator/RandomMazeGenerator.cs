@@ -15,7 +15,6 @@ namespace MazeGenerator
 
         private void Test(Maze maze, List<(int x, int y)> possibilities)
         {
-            var deads = new List<(int x, int y)>();
             while (possibilities.Count > 0)
             {
                 var nextPath = this.rand.Next() % possibilities.Count;
@@ -23,14 +22,13 @@ namespace MazeGenerator
 
                 maze.Board[y, x] = CaseType.Path;
                 possibilities.Remove((x, y));
-                deads.Add((x, y));
-                var newPossibilities = GetPossibilities(x, y, maze).Where(pos => !deads.Contains(pos)).ToList();
+                var newPossibilities = GetPossibilities(x, y, maze).Where(pos => maze[pos.y, pos.x] == CaseType.Unknow).ToList();
                 var toBeRemove = possibilities.Where(pos => newPossibilities.Contains(pos)).ToList();
                 foreach (var remove in toBeRemove)
                 {
                     possibilities.Remove(remove);
                     newPossibilities.Remove(remove);
-                    deads.Add(remove);
+                    maze.Board[remove.y, remove.x] = CaseType.Wall;
                 }
                 possibilities.AddRange(newPossibilities);
             }
@@ -68,21 +66,25 @@ namespace MazeGenerator
         internal Maze Generate(Dimension dimension)
         {
             var maze = Maze.Build(dimension);
-            maze.FillWith(CaseType.Wall);
+            maze.FillBoarderWith(CaseType.Wall);
             var entrance = (0, 1);
+            this.OpenEntrance(maze, entrance);
             this.Test(maze, new List<(int x, int y)>() { entrance });
             var exit = this.FindExit(maze);
-            this.OpenEntranceAndExit(maze, entrance, exit);
+            this.OpenExit(maze, exit);
 
             return maze;
         }
 
-        private void OpenEntranceAndExit(Maze maze, (int x, int y) entrance, (int x, int y) exit)
+        private void OpenEntrance(Maze maze, (int x, int y) entrance)
         {
             maze.Board[entrance.y, entrance.x] = CaseType.Path;
-            maze.Board[exit.y, exit.x] = CaseType.Path;
-
             maze.Entrance = entrance;
+        }
+
+        private void OpenExit(Maze maze, (int x, int y) exit)
+        {
+            maze.Board[exit.y, exit.x] = CaseType.Path;
             maze.Exit = exit;
         }
 

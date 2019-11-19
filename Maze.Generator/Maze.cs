@@ -35,7 +35,7 @@ namespace MazeGenerator
 
         public CaseType this[int y, int x] => this.Board[y, x];
 
-        internal void FillBoardWith(CaseType caseType)
+        internal void FillBoarderWith(CaseType caseType)
         {
             for (int x = 0; x < Dimension.X; x++)
             {
