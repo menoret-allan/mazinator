@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Maze.Drawing\Maze.Drawing.csproj" />
+    <ProjectReference Include="..\Maze.Generator\MazeGenerator.csproj" />
+  </ItemGroup>
+
+</Project>

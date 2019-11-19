@@ -1,0 +1,64 @@
+﻿@page "/"
+@using MazeGenerator;
+@inject IJSRuntime JSRuntime;
+@inject IGenerator MazeGenerator;
+
+<h1>Maze me ;)</h1>
+
+Welcome to my maze generator and solver it's just little time that I spent to remember the old time at school.
+
+<div>
+    <div>
+        <p>Change the width: <input type="number" @bind="width" /> size.</p>
+        <p>Change the height: <input type="number" @bind="height" /> size.</p>
+        <p>Change the number of pixel per case: <input type="number" @bind="numberOfPixelPerCase" /> px/case.</p>
+        <button @onclick="CreateMaze">Generate</button>
+    </div>
+    <canvas id="@canvasId"></canvas>
+</div>
+
+@code {
+    private int width = 42;
+    private int height = 42;
+    private int numberOfPixelPerCase = 8;
+    private readonly string canvasId = "canvasId";
+
+    public async Task<bool> CreateMaze()
+    {
+        var maze = MazeGenerator.Generate(this.width, this.height, GeneratorType.Random);
+
+        var width = numberOfPixelPerCase * maze.Dimension.X;
+        var height = numberOfPixelPerCase * maze.Dimension.Y;
+
+        var result = await JSRuntime.InvokeAsync<bool>("createCanvas", new { id = this.canvasId, width = width, height = height });
+
+        List<(int x, int y, int width, int height, string color)> mazeMap = new List<(int x, int y, int width, int height, string color)>();
+        for (int x = 0; x < maze.Dimension.X; x++)
+        {
+            for (int y = 0; y < maze.Dimension.Y; y++)
+            {
+                string color = maze[y, x] == CaseType.Wall ? "black" : "white";
+                mazeMap.Add((x * this.numberOfPixelPerCase, y * this.numberOfPixelPerCase, this.numberOfPixelPerCase, this.numberOfPixelPerCase, color));
+            }
+        }
+
+        result = await JSRuntime
+            .InvokeAsync<bool>("drawMaze",
+            new { id = this.canvasId, map = mazeMap.Select(i => new { x = i.x, y = i.y, width = i.width, height = i.height, color = i.color }).ToList() }            );
+
+
+        return result;
+
+    }
+
+    public async Task<bool> Clear_Canvas(string canvasID)
+    {
+        return await JSRuntime.InvokeAsync<bool>("showMessage");
+    }
+
+    public async Task<bool> Stroke_Rect(string canvasID, (int x, int y, int width, int height) transferRectParameters)
+    {
+
+        return await JSRuntime.InvokeAsync<bool>("JsInteropClockCanvas.Stroke_Rect", new { canvasID, transferRectParameters });
+    }
+}
