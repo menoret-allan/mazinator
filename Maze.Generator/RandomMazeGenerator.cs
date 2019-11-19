@@ -22,15 +22,18 @@ namespace MazeGenerator
 
                 maze.Board[y, x] = CaseType.Path;
                 possibilities.Remove((x, y));
-                var newPossibilities = GetPossibilities(x, y, maze).Where(pos => maze[pos.y, pos.x] == CaseType.Unknow).ToList();
-                var toBeRemove = possibilities.Where(pos => newPossibilities.Contains(pos)).ToList();
-                foreach (var remove in toBeRemove)
+                foreach (var remove in GetPossibilities(x, y, maze))
                 {
-                    possibilities.Remove(remove);
-                    newPossibilities.Remove(remove);
-                    maze.Board[remove.y, remove.x] = CaseType.Wall;
+                    if (possibilities.Contains(remove))
+                    {
+                        possibilities.Remove(remove);
+                        maze.Board[remove.y, remove.x] = CaseType.Wall;
+                    }
+                    else
+                    {
+                        possibilities.Add(remove);
+                    }
                 }
-                possibilities.AddRange(newPossibilities);
             }
         }
 
@@ -40,12 +43,18 @@ namespace MazeGenerator
             {
                 if (x > 1)
                 {
-                    yield return (x - 1, y);
+                    if (maze[y, x - 1] == CaseType.Unknow)
+                    {
+                        yield return (x - 1, y);
+                    }
                 }
 
                 if (x < maze.Dimension.X - 2)
                 {
-                    yield return (x + 1, y);
+                    if (maze[y, x + 1] == CaseType.Unknow)
+                    {
+                        yield return (x + 1, y);
+                    }
                 }
             }
 
@@ -53,12 +62,18 @@ namespace MazeGenerator
             {
                 if (y > 1)
                 {
-                    yield return (x, y - 1);
+                    if (maze[y-1, x] == CaseType.Unknow)
+                    {
+                        yield return (x, y - 1);
+                    }
                 }
 
                 if (y < maze.Dimension.Y - 2)
                 {
-                    yield return (x, y + 1);
+                    if (maze[y + 1, x] == CaseType.Unknow)
+                    {
+                        yield return (x, y + 1);
+                    }
                 }
             }
         }
