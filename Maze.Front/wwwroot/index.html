@@ -35,6 +35,14 @@
                 });
             } return true;
         }
+        function drawCase(obj) {
+            var canvas = document.getElementById(obj.id);
+            if (canvas.getContext) {
+                var ctx = canvas.getContext('2d');
+                ctx.fillStyle = obj.color;
+                ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+            } return true;
+        }
     </script>
 </body>
 </html>

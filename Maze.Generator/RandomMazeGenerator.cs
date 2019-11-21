@@ -13,7 +13,7 @@ namespace MazeGenerator
             this.rand = new Random();
         }
 
-        private void Test(Maze maze, HashSet<(int x, int y)> possibilities)
+        private void BuildInsideMaze(Maze maze, HashSet<(int x, int y)> possibilities)
         {
             while (possibilities.Count > 0)
             {
@@ -84,7 +84,16 @@ namespace MazeGenerator
             maze.FillBoarderWith(CaseType.Wall);
             var entrance = (0, 1);
             this.OpenEntrance(maze, entrance);
-            this.Test(maze, new HashSet<(int x, int y)> { entrance });
+            this.BuildInsideMaze(maze, new HashSet<(int x, int y)> { entrance });
+            for (int x = 1; x < maze.Dimension.X-1; x++)
+            {
+                for (int y = 1; y < maze.Dimension.Y-1; y++)
+                {
+                    if (maze[y, x] == CaseType.Unknow) maze.Board[y, x] = CaseType.Wall;
+                }
+            }
+
+
             var exit = this.FindExit(maze);
             this.OpenExit(maze, exit);
 

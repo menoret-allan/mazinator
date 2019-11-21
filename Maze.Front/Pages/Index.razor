@@ -12,7 +12,9 @@ Welcome to my maze generator and solver it's just little time that I spent to re
         <p>Change the width: <input type="number" @bind="width" /> size.</p>
         <p>Change the height: <input type="number" @bind="height" /> size.</p>
         <p>Change the number of pixel per case: <input type="number" @bind="numberOfPixelPerCase" /> px/case.</p>
-        <button @onclick="CreateMaze">Generate</button>
+        <p>Millisecond per move: <input type="number" @bind="numberOfMillisecondPerMove" /> ms/move.</p>
+        <button disabled="@DoStuff" @onclick="CreateMaze">Generate</button>
+        <button disabled="@DoStuff" @onclick="SolveMaze">Solve</button>
     </div>
     <canvas id="@canvasId"></canvas>
 </div>
@@ -21,34 +23,90 @@ Welcome to my maze generator and solver it's just little time that I spent to re
     private int width = 42;
     private int height = 42;
     private int numberOfPixelPerCase = 8;
+    private int mazeNumberOfPixelPerCase = 8;
+    private int numberOfMillisecondPerMove = 250;
     private readonly string canvasId = "canvasId";
+    private MazeGenerator.Maze maze;
+    private bool DoStuff = false;
 
     public async Task<bool> CreateMaze()
     {
-        var maze = MazeGenerator.Generate(this.width, this.height, GeneratorType.Random);
+        if (this.DoStuff) return false;
+        this.DoStuff = true;
 
-        var width = numberOfPixelPerCase * maze.Dimension.X;
-        var height = numberOfPixelPerCase * maze.Dimension.Y;
-
-        var result = await JSRuntime.InvokeAsync<bool>("createCanvas", new { id = this.canvasId, width = width, height = height });
-
-        List<(int x, int y, int width, int height, string color)> mazeMap = new List<(int x, int y, int width, int height, string color)>();
-        for (int x = 0; x < maze.Dimension.X; x++)
+        if (this.width >= 3 && this.height >= 3 && numberOfPixelPerCase >= 1)
         {
-            for (int y = 0; y < maze.Dimension.Y; y++)
+            this.maze = MazeGenerator.Generate(this.width, this.height, GeneratorType.Random);
+
+            var width = numberOfPixelPerCase * maze.Dimension.X;
+            var height = numberOfPixelPerCase * maze.Dimension.Y;
+
+            var result = await JSRuntime.InvokeAsync<bool>("createCanvas", new { id = this.canvasId, width = width, height = height });
+
+            List<(int x, int y, int width, int height, string color)> mazeMap = new List<(int x, int y, int width, int height, string color)>();
+            for (int x = 0; x < maze.Dimension.X; x++)
             {
-                string color = maze[y, x] == CaseType.Wall ? "black" : "white";
-                mazeMap.Add((x * this.numberOfPixelPerCase, y * this.numberOfPixelPerCase, this.numberOfPixelPerCase, this.numberOfPixelPerCase, color));
+                for (int y = 0; y < maze.Dimension.Y; y++)
+                {
+                    mazeMap.Add(
+                        (x * this.numberOfPixelPerCase, y * this.numberOfPixelPerCase,
+                        this.numberOfPixelPerCase, this.numberOfPixelPerCase,
+                        GetColor(maze[y, x])));
+                }
             }
+            mazeNumberOfPixelPerCase = numberOfPixelPerCase;
+            result = await JSRuntime
+                .InvokeAsync<bool>("drawMaze",
+                new { id = this.canvasId, map = mazeMap.Select(i => new { x = i.x, y = i.y, width = i.width, height = i.height, color = i.color }).ToList() });
+        }
+        else
+        {
+            Console.WriteLine("Nope nope nope! height >= 3 && width >= 3 && pixel >= 1");
         }
 
-        result = await JSRuntime
-            .InvokeAsync<bool>("drawMaze",
-            new { id = this.canvasId, map = mazeMap.Select(i => new { x = i.x, y = i.y, width = i.width, height = i.height, color = i.color }).ToList() }            );
+        DoStuff = false;
+        return true;
 
+    }
 
-        return result;
+    public async Task<bool> SolveMaze()
+    {
+        if (this.DoStuff) return false;
+        this.DoStuff = true;
+        var solver = new SolverPerfectMaze(this.maze);
 
+        foreach (var next in solver.NextStep())
+        {
+            if (this.numberOfMillisecondPerMove > 0)
+                await Task.Delay(this.numberOfMillisecondPerMove);
+            await JSRuntime
+                .InvokeAsync<bool>("drawCase",
+                new
+                {
+                    id = this.canvasId,
+                    x = next.x * this.mazeNumberOfPixelPerCase,
+                    y = next.y * this.mazeNumberOfPixelPerCase,
+                    width = this.mazeNumberOfPixelPerCase,
+                    height = this.mazeNumberOfPixelPerCase,
+                    color = GetColor(next.newState),
+                });
+        }
+        DoStuff = false;
+        return true;
+    }
+
+    private string GetColor(CaseType caseType)
+    {
+        switch (caseType)
+        {
+            case CaseType.Wall: return "black";
+            case CaseType.Path: return "white";
+            case CaseType.OnMyWay: return "blue";
+            case CaseType.DeadEnd: return "red";
+            case CaseType.Debug: return "green";
+            case CaseType.Unknow: return "pink";
+        }
+        return "purple";
     }
 
     public async Task<bool> Clear_Canvas(string canvasID)

@@ -8,6 +8,11 @@ namespace Maze.Console
     {
         static void Main(string[] args)
         {
+            SpeedTest();
+        }
+
+        static void SpeedTest()
+        {
             var cases = new List<Case> {
                 new Case { Width = 10, Height = 10, Repeat = 10000 },
                 new Case { Width = 100, Height = 50, Repeat = 2000 },

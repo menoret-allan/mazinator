@@ -55,6 +55,8 @@ namespace MazeGenerator
         Unknow,
         Path,
         Wall,
+        OnMyWay,
+        DeadEnd,
         Debug
     }
 }
