@@ -9,19 +9,22 @@ namespace Maze.Tests
 {
     public class EntranceAndExitAreLinkedByPathPropertyTests
     {
-        [Fact]
-        public void MazeGeneratorShouldGenerateMazeWithEnytranceLinkedWithPathToTheExit()
+        [Theory]
+        [InlineData(GeneratorType.Random)]
+        [InlineData(GeneratorType.Split)]
+        public void MazeGeneratorShouldGenerateMazeWithEnytranceLinkedWithPathToTheExit(GeneratorType generatorType)
         {
             var rand = new Random();
+            var generator = new Generator();
 
             for (int iteration = 0; iteration < 4; iteration++)
             {
                 var width = rand.Next() % 50 + 50;
                 var height = rand.Next() % 50 + 50;
 
-                MazeGenerator.Maze mazeRandom = CreateMaze(width, height);
+                var maze= generator.Generate(width, height, generatorType);
 
-                VerifyEntranceLinkedToExit(mazeRandom);
+                VerifyEntranceLinkedToExit(maze);
             }
 
         }
@@ -57,13 +60,6 @@ namespace Maze.Tests
                 .Where(pos => pos.y >= 0 && pos.y < maze.Dimension.Y)
                 .Where(pos => maze[pos.y, pos.x] == CaseType.Path)
                 .ToList();
-        }
-
-        private static MazeGenerator.Maze CreateMaze(int width, int height)
-        {
-            var test = new Generator();
-            var mazeRandom = test.Generate(width, height, GeneratorType.Random);
-            return mazeRandom;
         }
     }
 }

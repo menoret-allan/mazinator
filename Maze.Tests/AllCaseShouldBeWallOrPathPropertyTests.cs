@@ -7,8 +7,10 @@ namespace Maze.Tests
 {
     public class AllCaseShouldBeWallOrPathPropertyTests
     {
-        [Fact]
-        public void MazeGeneratorShouldWithPathAndWallOnly()
+        [Theory]
+        [InlineData(GeneratorType.Random)]
+        [InlineData(GeneratorType.Split)]
+        public void MazeGeneratorShouldWithPathAndWallOnly(GeneratorType generatorType)
         {
             var rand = new Random();
             var generator = new Generator();
@@ -18,7 +20,7 @@ namespace Maze.Tests
                 var width = rand.Next() % 25 + 50;
                 var height = rand.Next() % 25 + 50;
 
-                MazeGenerator.Maze mazeRandom = generator.Generate(width, height, GeneratorType.Random);
+                MazeGenerator.Maze mazeRandom = generator.Generate(width, height, generatorType);
                 VerifyMazeContent(mazeRandom);
             }
         }

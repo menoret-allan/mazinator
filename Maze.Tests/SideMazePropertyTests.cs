@@ -7,19 +7,23 @@ namespace Maze.Tests
 {
     public class SideMazePropertyTests
     {
-        [Fact]
-        public void MazeGeneratorShouldGenerateMazeWithCorrectPathSizeAndHave2PathOnTheBorder()
+        [Theory]
+        [InlineData(GeneratorType.Random)]
+        [InlineData(GeneratorType.Split)]
+        public void MazeGeneratorShouldGenerateMazeWithCorrectPathSizeAndHave2PathOnTheBorder(GeneratorType generatorType)
         {
             var rand = new Random();
+            var generator = new Generator();
 
             for (int iteration = 0; iteration < 15; iteration++)
             {
                 var width = rand.Next() % 50 + 50;
                 var height = rand.Next() % 50 + 50;
 
-                MazeGenerator.Maze mazeRandom = CreateMaze(width, height);
-                VerifyMazeSize(mazeRandom, width, height);
-                VerifyHasEntranceAndExit(mazeRandom);
+                var maze = generator.Generate(width, height, generatorType);
+
+                VerifyMazeSize(maze, width, height);
+                VerifyHasEntranceAndExit(maze);
             }
         }
 

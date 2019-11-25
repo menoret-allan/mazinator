@@ -9,19 +9,22 @@ namespace Maze.Tests
 {
     public class WallMazePropertyTests
     {
-        [Fact]
-        public void MazeGeneratorShouldGenerateMazeWithCorrectPathSizeAndHave2PathOnTheBorder()
+        [Theory]
+        [InlineData(GeneratorType.Random)]
+        [InlineData(GeneratorType.Split)]
+        public void MazeGeneratorShouldGenerateMazeWithCorrectPathSizeAndHave2PathOnTheBorder(GeneratorType generatorType)
         {
             var rand = new Random();
+            var generator = new Generator();
 
             for (int iteration = 0; iteration < 4; iteration++)
             {
                 var width = rand.Next() % 50 + 50;
                 var height = rand.Next() % 50 + 50;
 
-                MazeGenerator.Maze mazeRandom = CreateMaze(width, height);
+                var maze = generator.Generate(width, height, generatorType);
 
-                VerifyThatBlackAreIn2Blocks(mazeRandom);
+                VerifyThatBlackAreIn2Blocks(maze);
             }
 
         }
@@ -128,13 +131,6 @@ namespace Maze.Tests
                     return maze[pos.y, pos.x] == CaseType.Wall;
                 })
                 .ToList();
-        }
-
-        private static MazeGenerator.Maze CreateMaze(int width, int height)
-        {
-            var test = new Generator();
-            var mazeRandom = test.Generate(width, height, GeneratorType.Random);
-            return mazeRandom;
         }
     }
 }

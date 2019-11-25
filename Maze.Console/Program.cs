@@ -8,7 +8,8 @@ namespace Maze.Console
     {
         static void Main(string[] args)
         {
-            SpeedTest();
+            //SpeedTest();
+            SplitMazeGeneratorTest();
         }
 
         static void SpeedTest()
@@ -20,6 +21,7 @@ namespace Maze.Console
                 new Case { Width = 100, Height = 100, Repeat = 1000 },
                 new Case { Width = 1000, Height = 1000, Repeat = 10 },
             };
+            var test = new Generator();
 
             foreach (var item in cases)
             {
@@ -27,7 +29,6 @@ namespace Maze.Console
 
                 for (int i = 0; i < item.Repeat; i++)
                 {
-                    var test = new Generator();
                     var maze = test.Generate(item.Width, item.Height, GeneratorType.Random);
                 }
 
@@ -35,6 +36,14 @@ namespace Maze.Console
                 item.Result = watch.ElapsedMilliseconds;
                 System.Console.WriteLine(item);
             }
+        }
+
+        static void SplitMazeGeneratorTest() {
+            var test = new Generator();
+            var maze = test.Generate(42, 42, GeneratorType.Split);
+
+            var result = MazeToImage.Convert(maze, 8);
+            result.Save("test.jpg");
         }
     }
 

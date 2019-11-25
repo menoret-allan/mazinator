@@ -16,7 +16,7 @@ namespace MazeGenerator
         public (int x, int y) Entrance { get; internal set; }
         public (int x, int y) Exit { get; internal set; }
 
-        internal static Maze Build(Dimension dimension)
+        public static Maze Build(Dimension dimension)
         {
             var board = new CaseType[dimension.Y, dimension.X];
             return new Maze(dimension, board);
