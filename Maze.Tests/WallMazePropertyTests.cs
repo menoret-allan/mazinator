@@ -12,7 +12,7 @@ namespace Maze.Tests
         [Theory]
         [InlineData(GeneratorType.Random)]
         [InlineData(GeneratorType.Split)]
-        public void MazeGeneratorShouldGenerateMazeWithCorrectPathSizeAndHave2PathOnTheBorder(GeneratorType generatorType)
+        public void MazeGeneratorShouldGenerateMazeWithExactly2WallBlocks(GeneratorType generatorType)
         {
             var rand = new Random();
             var generator = new Generator();

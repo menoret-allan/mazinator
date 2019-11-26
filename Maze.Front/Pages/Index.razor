@@ -13,7 +13,14 @@ Welcome to my maze generator and solver it's just little time that I spent to re
         <p>Change the height: <input type="number" @bind="height" /> size.</p>
         <p>Change the number of pixel per case: <input type="number" @bind="numberOfPixelPerCase" /> px/case.</p>
         <p>Millisecond per move: <input type="number" @bind="numberOfMillisecondPerMove" /> ms/move.</p>
-        <button disabled="@DoStuff" @onclick="CreateMaze">Generate</button>
+        <p>
+            Select your path generator algorithm:
+            <select id="select-box" @bind="generatorType">
+                <option value=@GeneratorType.Random>@GeneratorType.Random.ToString()</option>
+                <option value=@GeneratorType.Split>@GeneratorType.Split.ToString()</option>
+            </select>
+        </p>
+<button disabled="@DoStuff" @onclick="CreateMaze">Generate</button>
         <button disabled="@DoStuff" @onclick="SolveMaze">Solve</button>
     </div>
     <canvas id="@canvasId"></canvas>
@@ -26,6 +33,7 @@ Welcome to my maze generator and solver it's just little time that I spent to re
     private int mazeNumberOfPixelPerCase = 8;
     private int numberOfMillisecondPerMove = 250;
     private readonly string canvasId = "canvasId";
+    private GeneratorType generatorType = GeneratorType.Random;
     private MazeGenerator.Maze maze;
     private bool DoStuff = false;
 
@@ -36,7 +44,7 @@ Welcome to my maze generator and solver it's just little time that I spent to re
 
         if (this.width >= 3 && this.height >= 3 && numberOfPixelPerCase >= 1)
         {
-            this.maze = MazeGenerator.Generate(this.width, this.height, GeneratorType.Random);
+            this.maze = MazeGenerator.Generate(this.width, this.height, this.generatorType);
 
             var width = numberOfPixelPerCase * maze.Dimension.X;
             var height = numberOfPixelPerCase * maze.Dimension.Y;
