@@ -41,6 +41,9 @@ namespace MazeGenerator
                     var result = possibilities[rand.Next() % possibilities.Count()];
                     maze.Board[result.y, result.x] = CaseType.Wall;
                 }
+                else
+                {
+                }
                 return;
             }
 
@@ -58,13 +61,24 @@ namespace MazeGenerator
                 else if (TrySetWallForWidth(maze, (area.X + 1, y), 1))
                 {
                 }
+                else if (TrySetWallForWidth(maze, (area.X, y), -1))
+                {
+                }
+                else if (area.Height == 3)
+                {
+                    Generate(maze, new Area(area.X, area.Y, area.Width, 2));
+                    Generate(maze, new Area(area.X, area.Y + 1, area.Width, 2));
+                    return;
+                }
                 else
                 {
-                    TrySetWallForWidth(maze, (area.X, y), -1);
+                    Generate(maze, new Area(area.X, area.Y, area.Width, area.Height));
+                    return;
                 }
 
-                Generate(maze, new Area(area.X, area.Y, area.Width, posToExtract+1));
+                Generate(maze, new Area(area.X, area.Y, area.Width, posToExtract + 1));
                 Generate(maze, new Area(area.X, y + 1, area.Width, area.Height - posToExtract - 2));
+
 
                 return;
             }
@@ -80,13 +94,22 @@ namespace MazeGenerator
                 {
                 }
                 else if (TrySetWallForHeight(maze, (x, area.Y + 1), 1)) { }
+                else if (TrySetWallForHeight(maze, (x, area.Y), -1))
+                {
+                }
+                else if (area.Width == 3)
+                {
+                    Generate(maze, new Area(area.X, area.Y, 2, area.Height));
+                    Generate(maze, new Area(area.X + 1, area.Y, 2, area.Height));
+                    return;
+                }
                 else
                 {
-                    TrySetWallForHeight(maze, (x, area.Y), -1);
+                    Generate(maze, new Area(area.X, area.Y, area.Width, area.Height));
+                    return;
                 }
-
-                Generate(maze, new Area(area.X, area.Y, posToExtract+1, area.Height));
-                Generate(maze, new Area(x + 1, area.Y, area.Width - posToExtract -2, area.Height));
+                Generate(maze, new Area(area.X, area.Y, posToExtract + 1, area.Height));
+                Generate(maze, new Area(x + 1, area.Y, area.Width - posToExtract - 2, area.Height));
 
                 return;
             }
@@ -267,16 +290,6 @@ namespace MazeGenerator
             maze.Entrance = entrance;
             maze.Board[exit.y, exit.x] = CaseType.Path;
             maze.Exit = exit;
-        }
-
-        private int GetHoleInTheLine(int size, Random rand)
-        {
-            return rand.Next() % size;
-        }
-
-        private static int GetMiddleLinePosition(int distance, Random rand)
-        {
-            return rand.Next() % (distance - 2) + 1;
         }
     }
 }

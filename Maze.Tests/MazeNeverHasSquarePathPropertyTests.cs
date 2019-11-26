@@ -4,25 +4,28 @@ using Xunit;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
+using Maze.Drawing;
 
 namespace Maze.Tests
 {
     public class MazeNeverHasSquarePathPropertyTests
     {
         [Theory]
-        [InlineData(GeneratorType.Random)]
+        //[InlineData(GeneratorType.Random)]
         [InlineData(GeneratorType.Split)]
         public void MazeGeneratorShouldGenerateMazeWithout4PathCasesInSquare(GeneratorType generatorType)
         {
             var rand = new Random();
             var generator = new Generator();
 
-            for (int iteration = 0; iteration < 4; iteration++)
+            for (int iteration = 0; iteration < 10; iteration++)
             {
                 var width = rand.Next() % 25 + 25;
                 var height = rand.Next() % 25 + 25;
 
                 var maze = generator.Generate(width, height, generatorType);
+                var img = MazeToImage.Convert(maze, 8);
+                img.Save($"test{iteration}.jpg");
 
                 VerifyNoSquarePathInTheMaze(maze);
             }

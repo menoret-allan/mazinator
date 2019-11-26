@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Maze.Drawing\Maze.Drawing.csproj" />
     <ProjectReference Include="..\Maze.Generator\MazeGenerator.csproj" />
   </ItemGroup>
 
