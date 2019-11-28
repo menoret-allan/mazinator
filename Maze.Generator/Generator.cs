@@ -17,6 +17,8 @@ namespace MazeGenerator
             {
                 case GeneratorType.Split:
                     return new SplitMazeGenerator().Generate(dimension);
+                case GeneratorType.RecursiveSplit:
+                    return new RecursiveSplitMazeGenerator().Generate(dimension);
                 case GeneratorType.Random:
                     return new RandomMazeGenerator().Generate(dimension);
                 default:

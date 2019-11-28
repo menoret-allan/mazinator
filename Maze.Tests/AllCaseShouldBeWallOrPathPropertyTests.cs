@@ -8,8 +8,9 @@ namespace Maze.Tests
     public class AllCaseShouldBeWallOrPathPropertyTests
     {
         [Theory]
-        [InlineData(GeneratorType.Random)]
-        [InlineData(GeneratorType.Split)]
+        //[InlineData(GeneratorType.Random)]
+        //[InlineData(GeneratorType.Split)]
+        [InlineData(GeneratorType.RecursiveSplit)]
         public void MazeGeneratorShouldWithPathAndWallOnly(GeneratorType generatorType)
         {
             var rand = new Random();

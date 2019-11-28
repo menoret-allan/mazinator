@@ -4,14 +4,16 @@ using Xunit;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
+using Maze.Drawing;
 
 namespace Maze.Tests
 {
     public class WallMazePropertyTests
     {
         [Theory]
-        [InlineData(GeneratorType.Random)]
-        [InlineData(GeneratorType.Split)]
+        //[InlineData(GeneratorType.Random)]
+        [InlineData(GeneratorType.RecursiveSplit)]
+        //[InlineData(GeneratorType.Split)]
         public void MazeGeneratorShouldGenerateMazeWithExactly2WallBlocks(GeneratorType generatorType)
         {
             var rand = new Random();
@@ -23,6 +25,8 @@ namespace Maze.Tests
                 var height = rand.Next() % 50 + 50;
 
                 var maze = generator.Generate(width, height, generatorType);
+                var img = MazeToImage.Convert(maze, 8);
+                img.Save($"test-2wallblock{iteration}.jpg");
 
                 VerifyThatBlackAreIn2Blocks(maze);
             }

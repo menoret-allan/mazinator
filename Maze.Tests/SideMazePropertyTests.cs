@@ -9,6 +9,7 @@ namespace Maze.Tests
     {
         [Theory]
         [InlineData(GeneratorType.Random)]
+        [InlineData(GeneratorType.RecursiveSplit)]
         [InlineData(GeneratorType.Split)]
         public void MazeGeneratorShouldGenerateMazeWithCorrectPathSizeAndHave2PathOnTheBorder(GeneratorType generatorType)
         {

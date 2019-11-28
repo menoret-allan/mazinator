@@ -43,6 +43,14 @@ namespace MazeGenerator
                 }
                 else
                 {
+                    for (int x = area.X - 1; x <= area.X + 2; x++)
+                    {
+                        for (int y = area.Y - 1; y <= area.Y + 2; y++)
+                        {
+                            maze.Board[y, x] = CaseType.Wall;
+                        }
+                    }
+
                 }
                 return;
             }

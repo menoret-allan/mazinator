@@ -12,7 +12,8 @@ namespace Maze.Tests
     {
         [Theory]
         //[InlineData(GeneratorType.Random)]
-        [InlineData(GeneratorType.Split)]
+        //[InlineData(GeneratorType.Split)]
+        [InlineData(GeneratorType.RecursiveSplit)]
         public void MazeGeneratorShouldGenerateMazeWithout4PathCasesInSquare(GeneratorType generatorType)
         {
             var rand = new Random();
