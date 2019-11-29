@@ -1,39 +1,44 @@
+﻿using FluentAssertions;
 using MazeGenerator;
-using System;
-using Xunit;
-using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
-using Maze.Drawing;
 
-namespace Maze.Tests
+namespace Maze.Tests.PropertyMazeValidator
 {
-    public class WallMazePropertyTests
+    internal static class MazeExtensions
     {
-        [Theory]
-        //[InlineData(GeneratorType.Random)]
-        [InlineData(GeneratorType.RecursiveSplit)]
-        //[InlineData(GeneratorType.Split)]
-        public void MazeGeneratorShouldGenerateMazeWithExactly2WallBlocks(GeneratorType generatorType)
+        internal static void AssertContainOnlyWallAndPath(this MazeGenerator.Maze maze)
         {
-            var rand = new Random();
-            var generator = new Generator();
-
-            for (int iteration = 0; iteration < 4; iteration++)
+            int caseFound = 0;
+            foreach (var caseType in maze.Board)
             {
-                var width = rand.Next() % 50 + 50;
-                var height = rand.Next() % 50 + 50;
-
-                var maze = generator.Generate(width, height, generatorType);
-                var img = MazeToImage.Convert(maze, 8);
-                img.Save($"test-2wallblock{iteration}.jpg");
-
-                VerifyThatBlackAreIn2Blocks(maze);
+                if (caseType != CaseType.Path && caseType != CaseType.Wall) caseFound++;
             }
-
+            caseFound.Should().Be(0);
         }
 
-        private static void VerifyThatBlackAreIn2Blocks(MazeGenerator.Maze maze)
+
+        internal static void AssertNoSquarePathExist(this MazeGenerator.Maze maze)
+        {
+            List<(int x, int y)> errorList = new List<(int x, int y)>();
+            for (int x = 0; x < maze.Dimension.X - 1; x++)
+            {
+                for (int y = 0; y < maze.Dimension.Y - 1; y++)
+                {
+                    if (maze[y, x] == CaseType.Path &&
+                        maze[y, x + 1] == CaseType.Path &&
+                        maze[y + 1, x] == CaseType.Path &&
+                        maze[y + 1, x + 1] == CaseType.Path)
+                    {
+                        errorList.Add((x, y));
+                    }
+                }
+            }
+
+            errorList.Should().BeEmpty();
+        }
+
+        internal static void AssertThatWallAreSplittedIn2Blocks(this MazeGenerator.Maze maze)
         {
             var wallEntrance = GetWallEntranceNeihboors(maze, maze.Entrance);
             wallEntrance.Count.Should().Be(2);
@@ -58,8 +63,41 @@ namespace Maze.Tests
             {
                 maze.Board[test.y, test.x] = CaseType.Debug;
             }
-           
+
             AllBlackWalls.Should().BeEmpty();
+        }
+
+        internal static void AssertEntranceLinkedToExit(this MazeGenerator.Maze maze)
+        {
+            var wallEntrance = maze.Entrance;
+            var processedPath = new List<(int x, int y)>();
+            var toBeProcessPath = new List<(int x, int y)> { wallEntrance };
+            while (toBeProcessPath.Any())
+            {
+                var first = toBeProcessPath.First();
+                processedPath.Add(first);
+                toBeProcessPath.Remove(first);
+                var nextMoves = GetPathNeihboors(maze, first).Where(pos => !processedPath.Contains(pos) && !toBeProcessPath.Contains(pos));
+                toBeProcessPath.AddRange(nextMoves.ToList());
+            }
+            processedPath.Should().Contain(maze.Exit);
+        }
+
+        private static List<(int x, int y)> GetPathNeihboors(MazeGenerator.Maze maze, (int, int) pos)
+        {
+            (int x, int y) = pos;
+            var walls = new List<(int x, int y)> {
+                (x,y-1),
+                (x-1,y),
+                (x+1,y),
+                (x,y+1),
+            };
+
+            return walls
+                .Where(pos => pos.x >= 0 && pos.x < maze.Dimension.X)
+                .Where(pos => pos.y >= 0 && pos.y < maze.Dimension.Y)
+                .Where(pos => maze[pos.y, pos.x] == CaseType.Path)
+                .ToList();
         }
 
         private static List<(int x, int y)> GetLinkedWalls(MazeGenerator.Maze maze, (int x, int y) pos, List<(int x, int y)> AllBlackWalls)

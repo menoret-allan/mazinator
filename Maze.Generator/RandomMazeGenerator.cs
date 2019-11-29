@@ -8,9 +8,9 @@ namespace MazeGenerator
     {
         private Random rand;
 
-        public RandomMazeGenerator()
+        public RandomMazeGenerator(Random rand)
         {
-            this.rand = new Random();
+            this.rand = rand;
         }
 
         private void BuildInsideMaze(Maze maze, HashSet<(int x, int y)> possibilities)

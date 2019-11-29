@@ -8,7 +8,7 @@ namespace Maze.Tests.UT
 {
     public class SplitMazeGeneratorTests
     {
-        private SplitMazeGenerator mazeGenerator = new SplitMazeGenerator();
+        private SplitMazeGenerator mazeGenerator = new SplitMazeGenerator(new Random());
         private List<CaseType> wallList = new List<CaseType> { CaseType.Wall, CaseType.Wall, CaseType.Wall, CaseType.Wall, };
 
         [Fact]

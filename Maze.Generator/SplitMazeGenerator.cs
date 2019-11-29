@@ -6,15 +6,17 @@ namespace MazeGenerator
 {
     public class SplitMazeGenerator
     {
-        public SplitMazeGenerator()
+        private Random rand;
+
+        public SplitMazeGenerator(Random rand)
         {
+            this.rand = rand;
         }
 
         public void Generate(Maze maze, Area area)
         {
             if (area.Width <= 1 || area.Height <= 1)
             { return; }
-            var rand = new Random();
 
             if (area.Width == 2 && area.Height == 2)
             {

@@ -9,6 +9,13 @@ namespace MazeGenerator
 
     public class Generator : IGenerator
     {
+        private Random rand;
+
+        public Generator(Random rand)
+        {
+            this.rand = rand;
+        }
+
         public Maze Generate(int x, int y, GeneratorType generatorType)
         {
             var dimension = new Dimension(x, y);
@@ -16,11 +23,11 @@ namespace MazeGenerator
             switch (generatorType)
             {
                 case GeneratorType.Split:
-                    return new SplitMazeGenerator().Generate(dimension);
+                    return new SplitMazeGenerator(this.rand).Generate(dimension);
                 case GeneratorType.RecursiveSplit:
-                    return new RecursiveSplitMazeGenerator().Generate(dimension);
+                    return new RecursiveSplitMazeGenerator(this.rand).Generate(dimension);
                 case GeneratorType.Random:
-                    return new RandomMazeGenerator().Generate(dimension);
+                    return new RandomMazeGenerator(this.rand).Generate(dimension);
                 default:
                     break;
             }
