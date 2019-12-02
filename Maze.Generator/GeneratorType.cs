@@ -2,7 +2,6 @@
 {
     public enum GeneratorType
     {
-        Split,
         RecursiveSplit,
         Random
     }

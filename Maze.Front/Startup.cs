@@ -9,6 +9,7 @@ namespace Maze.Front
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IGenerator, Generator>();
+            services.AddSingleton<IRand, Rand>(s => new Rand(new System.Random()));
         }
 
         public void Configure(IComponentsApplicationBuilder app)

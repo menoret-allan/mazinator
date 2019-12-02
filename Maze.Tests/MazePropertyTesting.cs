@@ -16,7 +16,7 @@ namespace Maze.Tests
         [MemberData(nameof(GenerateSeeAndMazeType), NumberOfIteration)]
         public void ShouldContentOnlyPathAndWall(int seed, GeneratorType generatorType)
         {
-            var rand = new Random(seed);
+            var rand = new Rand(new Random(seed));
             var generator = new Generator(rand);
             var width = rand.Next() % 25 + 50;
             var height = rand.Next() % 25 + 50;
@@ -31,7 +31,7 @@ namespace Maze.Tests
         [InlineData(1015014289, GeneratorType.RecursiveSplit)]
         public void ShouldHave2BlocksOfWall(int seed, GeneratorType generatorType)
         {
-            var rand = new Random(seed);
+            var rand = new Rand(new Random(seed));
             var generator = new Generator(rand);
 
             var width = rand.Next() % 50 + 50;
@@ -48,7 +48,7 @@ namespace Maze.Tests
         [MemberData(nameof(GenerateSeeAndMazeType), NumberOfIteration)]
         public void MazeGeneratorShouldGenerateMazeWithout4PathCasesInSquare(int seed, GeneratorType generatorType)
         {
-            var rand = new Random(seed);
+            var rand = new Rand(new Random(seed));
             var generator = new Generator(rand);
             var width = rand.Next() % 25 + 25;
             var height = rand.Next() % 25 + 25;
@@ -63,7 +63,7 @@ namespace Maze.Tests
         //[InlineData(4550669, GeneratorType.RecursiveSplit)]
         public void MazeGeneratorShouldGenerateMazeWithEnytranceLinkedWithPathToTheExit(int seed, GeneratorType generatorType)
         {
-            var rand = new Random(seed);
+            var rand = new Rand(new Random(seed));
             var generator = new Generator(rand);
             var width = rand.Next() % 50 + 50;
             var height = rand.Next() % 50 + 50;
@@ -76,10 +76,9 @@ namespace Maze.Tests
         [Theory]
         [InlineData(GeneratorType.Random)]
         [InlineData(GeneratorType.RecursiveSplit)]
-        [InlineData(GeneratorType.Split)]
         public void MazeGeneratorShouldGenerateMazeWithCorrectPathSizeAndHave2PathOnTheBorder(GeneratorType generatorType)
         {
-            var rand = new Random();
+            var rand = new Rand(new Random());
             var generator = new Generator(rand);
 
             for (int iteration = 0; iteration < 15; iteration++)
@@ -133,7 +132,8 @@ namespace Maze.Tests
 
         private static MazeGenerator.Maze CreateMaze(int width, int height)
         {
-            var test = new Generator(new Random());
+            var rand = new Rand(new Random());
+            var test = new Generator(rand);
             var mazeRandom = test.Generate(width, height, GeneratorType.Random);
             return mazeRandom;
         }

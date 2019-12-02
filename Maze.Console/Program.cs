@@ -22,7 +22,7 @@ namespace Maze.Console
                 new Case { Width = 100, Height = 100, Repeat = 1000 },
                 new Case { Width = 1000, Height = 1000, Repeat = 10 },
             };
-            var rand = new Random();
+            var rand = new Rand(new Random());
             var test = new Generator(rand);
 
             foreach (var item in cases)
@@ -41,9 +41,11 @@ namespace Maze.Console
         }
 
         static void SplitMazeGeneratorTest() {
-            var rand = new Random();
+            var rand = new Rand(new Random());
             var test = new Generator(rand);
-            var maze = test.Generate(42, 42, GeneratorType.Split);
+            var width = rand.Next() % 50 + 50;
+            var height = rand.Next() % 50 + 50;
+            var maze = test.Generate(width, height, GeneratorType.RecursiveSplit);
 
             var result = MazeToImage.Convert(maze, 8);
             result.Save("test.jpg");

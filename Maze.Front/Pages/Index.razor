@@ -17,7 +17,7 @@ Welcome to my maze generator and solver it's just little time that I spent to re
             Select your path generator algorithm:
             <select id="select-box" @bind="generatorType">
                 <option value=@GeneratorType.Random>@GeneratorType.Random.ToString()</option>
-                <option value=@GeneratorType.Split>@GeneratorType.Split.ToString()</option>
+                <option value=@GeneratorType.RecursiveSplit>@GeneratorType.RecursiveSplit.ToString()</option>
             </select>
         </p>
 <button disabled="@DoStuff" @onclick="CreateMaze">Generate</button>

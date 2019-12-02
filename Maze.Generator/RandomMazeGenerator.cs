@@ -6,9 +6,9 @@ namespace MazeGenerator
 {
     public class RandomMazeGenerator
     {
-        private Random rand;
+        private IRand rand;
 
-        public RandomMazeGenerator(Random rand)
+        public RandomMazeGenerator(IRand rand)
         {
             this.rand = rand;
         }
