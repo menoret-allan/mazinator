@@ -88,12 +88,12 @@ namespace Maze.Tests
 
                 var maze = generator.Generate(width, height, generatorType);
 
-                VerifyMazeSize(maze, width, height);
+                VerifyMazeSize(maze,(ushort) width, (ushort) height);
                 VerifyHasEntranceAndExit(maze);
             }
         }
 
-        private static void VerifyMazeSize(MazeGenerator.Maze maze, int width, int height)
+        private static void VerifyMazeSize(MazeGenerator.Maze maze, ushort width, ushort height)
         {
             maze.Dimension.X.Should().Be(width);
             maze.Dimension.Y.Should().Be(height);

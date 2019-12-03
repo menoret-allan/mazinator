@@ -2,10 +2,10 @@
 {
     public class Dimension
     {
-        public int X { get; }
-        public int Y { get; }
+        public ushort X { get; }
+        public ushort Y { get; }
 
-        public Dimension(int x, int y)
+        public Dimension(ushort x, ushort y)
         {
             X = x;
             Y = y;

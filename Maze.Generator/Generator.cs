@@ -18,12 +18,12 @@ namespace MazeGenerator
 
         public Maze Generate(int x, int y, GeneratorType generatorType)
         {
-            var dimension = new Dimension(x, y);
+            var dimension = new Dimension( (ushort)x,(ushort)y);
 
             switch (generatorType)
             {
                 case GeneratorType.RecursiveSplit:
-                    return new RecursiveSplitMazeGenerator(this.rand).Generate(dimension);
+                    return new RecursiveSplitMazeGenerator(this.rand, dimension).Generate();
                 case GeneratorType.Random:
                     return new RandomMazeGenerator(this.rand).Generate(dimension);
                 default:

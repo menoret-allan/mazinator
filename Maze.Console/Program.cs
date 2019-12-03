@@ -21,12 +21,12 @@ namespace Maze.Console
                 new Case { Width = 50, Height = 100, Repeat = 2000, GeneratorType = GeneratorType.RecursiveSplit },
                 new Case { Width = 100, Height = 100, Repeat = 1000, GeneratorType = GeneratorType.RecursiveSplit },
                 new Case { Width = 1000, Height = 1000, Repeat = 10, GeneratorType = GeneratorType.RecursiveSplit },
-                new Case { Width = 10000, Height = 10000, Repeat = 10, GeneratorType = GeneratorType.RecursiveSplit },
+                //new Case { Width = 10000, Height = 10000, Repeat = 10, GeneratorType = GeneratorType.RecursiveSplit }, // stackoverflow
                 //new Case { Width = 10, Height = 10, Repeat = 10000, GeneratorType = GeneratorType.Random },
                 //new Case { Width = 100, Height = 50, Repeat = 2000, GeneratorType = GeneratorType.Random},
                 //new Case { Width = 50, Height = 100, Repeat = 2000, GeneratorType = GeneratorType.Random},
                 //new Case { Width = 100, Height = 100, Repeat = 1000, GeneratorType = GeneratorType.Random},
-                //new Case { Width = 1000, Height = 1000, Repeat = 10, GeneratorType = GeneratorType.Random},
+                //new Case { Width = 1000, Height = 1000, Repeat = 1, GeneratorType = GeneratorType.Random}, // too long
             };
             var rand = new Rand(new Random());
             var test = new Generator(rand);
@@ -49,7 +49,7 @@ namespace Maze.Console
         }
 
         static void SplitMazeGeneratorTest() {
-            var rand = new Rand(new Random());
+            var rand = new Rand(new Random(922384482));
             var test = new Generator(rand);
             var width = rand.Next() % 50 + 50;
             var height = rand.Next() % 50 + 50;

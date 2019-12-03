@@ -13,7 +13,7 @@ namespace MazeGenerator
             this.rand = rand;
         }
 
-        private void BuildInsideMaze(Maze maze, HashSet<(int x, int y)> possibilities)
+        private void BuildInsideMaze(Maze maze, HashSet<(ushort x, ushort y)> possibilities)
         {
             while (possibilities.Count > 0)
             {
@@ -37,7 +37,7 @@ namespace MazeGenerator
             }
         }
 
-        private IEnumerable<(int x, int y)> GetPossibilities(int x, int y, Maze maze)
+        private IEnumerable<(ushort x, ushort y)> GetPossibilities(ushort x, ushort y, Maze maze)
         {
             if (y != 0)
             {
@@ -45,7 +45,7 @@ namespace MazeGenerator
                 {
                     if (maze[y, x - 1] == CaseType.Unknow)
                     {
-                        yield return (x - 1, y);
+                        yield return ((ushort)(x - 1), y);
                     }
                 }
 
@@ -53,7 +53,7 @@ namespace MazeGenerator
                 {
                     if (maze[y, x + 1] == CaseType.Unknow)
                     {
-                        yield return (x + 1, y);
+                        yield return ((ushort)(x + 1), y);
                     }
                 }
             }
@@ -64,7 +64,7 @@ namespace MazeGenerator
                 {
                     if (maze[y - 1, x] == CaseType.Unknow)
                     {
-                        yield return (x, y - 1);
+                        yield return (x, (ushort)(y - 1));
                     }
                 }
 
@@ -72,7 +72,7 @@ namespace MazeGenerator
                 {
                     if (maze[y + 1, x] == CaseType.Unknow)
                     {
-                        yield return (x, y + 1);
+                        yield return (x, (ushort)(y + 1));
                     }
                 }
             }
@@ -82,9 +82,9 @@ namespace MazeGenerator
         {
             var maze = Maze.Build(dimension);
             maze.FillBoarderWith(CaseType.Wall);
-            var entrance = (0, 1);
+            var entrance = ((ushort)0, (ushort)1);
             this.OpenEntrance(maze, entrance);
-            this.BuildInsideMaze(maze, new HashSet<(int x, int y)> { entrance });
+            this.BuildInsideMaze(maze, new HashSet<(ushort x, ushort y)> { entrance });
             for (int x = 1; x < maze.Dimension.X-1; x++)
             {
                 for (int y = 1; y < maze.Dimension.Y-1; y++)
@@ -100,34 +100,34 @@ namespace MazeGenerator
             return maze;
         }
 
-        private void OpenEntrance(Maze maze, (int x, int y) entrance)
+        private void OpenEntrance(Maze maze, (ushort x, ushort y) entrance)
         {
             maze.Board[entrance.y, entrance.x] = CaseType.Path;
             maze.Entrance = entrance;
         }
 
-        private void OpenExit(Maze maze, (int x, int y) exit)
+        private void OpenExit(Maze maze, (ushort x, ushort y) exit)
         {
             maze.Board[exit.y, exit.x] = CaseType.Path;
             maze.Exit = exit;
         }
 
-        private (int x, int y) FindExit(Maze maze)
+        private (ushort x, ushort y) FindExit(Maze maze)
         {
-            List<(int x, int y)> possibilities = new List<(int x, int y)>();
+            List<(ushort x, ushort y)> possibilities = new List<(ushort x, ushort y)>();
 
-            for (int rightSide = 1; rightSide < maze.Dimension.Y - 1; rightSide++)
+            for (ushort rightSide = 1; rightSide < maze.Dimension.Y - 1; rightSide++)
             {
                 if (maze.Board[rightSide, maze.Dimension.X - 2] == CaseType.Path)
                 {
-                    possibilities.Add((maze.Dimension.X - 1, rightSide));
+                    possibilities.Add(((ushort)(maze.Dimension.X - 1), rightSide));
                 }
             }
-            for (int downSide = 1; downSide < maze.Dimension.X - 1; downSide++)
+            for (ushort downSide = 1; downSide < maze.Dimension.X - 1; downSide++)
             {
                 if (maze.Board[maze.Dimension.Y - 2, downSide] == CaseType.Path)
                 {
-                    possibilities.Add((downSide, maze.Dimension.Y - 1));
+                    possibilities.Add((downSide, (ushort)(maze.Dimension.Y - 1)));
                 }
             }
 

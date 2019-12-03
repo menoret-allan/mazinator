@@ -13,8 +13,8 @@ namespace MazeGenerator
 
         public Dimension Dimension { get; internal set; }
         public CaseType[,] Board { get; internal set; }
-        public (int x, int y) Entrance { get; internal set; }
-        public (int x, int y) Exit { get; internal set; }
+        public (ushort x, ushort y) Entrance { get; internal set; }
+        public (ushort x, ushort y) Exit { get; internal set; }
 
         public static Maze Build(Dimension dimension)
         {
@@ -24,15 +24,18 @@ namespace MazeGenerator
 
         internal void FillWith(CaseType caseType)
         {
-            for (int x = 0; x < Dimension.X; x++)
+            for (ushort x = 0; x < Dimension.X; x++)
             {
-                for (int y = 0; y < Dimension.Y; y++)
+                for (ushort y = 0; y < Dimension.Y; y++)
                 {
                     Board[y, x] = caseType;
                 }
             }
         }
 
+        public CaseType this[ushort y, ushort x] => this.Board[y, x];
+        public CaseType this[int y, ushort x] => this.Board[y, x];
+        public CaseType this[ushort y, int x] => this.Board[y, x];
         public CaseType this[int y, int x] => this.Board[y, x];
 
         internal void FillBoarderWith(CaseType caseType)

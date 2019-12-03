@@ -2,7 +2,7 @@
 {
     public class Area
     {
-        public Area(int x, int y, int width, int height)
+        public Area(ushort x, ushort y, ushort width, ushort height)
         {
             X = x;
             Y = y;
@@ -10,9 +10,9 @@
             Height = height;
         }
 
-        public int X { get; internal set; }
-        public int Y { get; internal set; }
-        public int Width { get; internal set; }
-        public int Height { get; internal set; }
+        public ushort X { get; internal set; }
+        public ushort Y { get; internal set; }
+        public ushort Width { get; internal set; }
+        public ushort Height { get; internal set; }
     }
 }

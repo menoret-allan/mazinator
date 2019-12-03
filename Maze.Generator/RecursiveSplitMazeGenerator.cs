@@ -8,19 +8,17 @@ namespace MazeGenerator
     public class RecursiveSplitMazeGenerator
     {
         private IRand rand;
+        private Maze maze;
 
-        public RecursiveSplitMazeGenerator(IRand rand)
+        public RecursiveSplitMazeGenerator(IRand rand, Dimension dimension)
         {
             this.rand = rand;
+            maze = Maze.Build(dimension);
         }
 
-        delegate void Gen(Maze maze, Area area);
-
-        public void Generate(Maze maze, Area area)
+        public void Generate(Area area)
         {
-            Gen  gen = Generate;
             List<Area> todo = new List<Area>();
-            var walls = new List<(int x, int y)>();
 
             if (area.Width == 2 && area.Height == 2)
             {
@@ -30,11 +28,10 @@ namespace MazeGenerator
 
             if (area.Width > area.Height)
             {
-                List<int> possibilities = GetPossibilitiesForWidth(maze, area);
-                var raw = possibilities[rand.Next() % possibilities.Count()];
-                Area areaLeft = new Area(area.X, area.Y, raw - area.X, area.Height);
+                var raw = GetPossibilitiesForWidth(maze, area);
+                Area areaLeft = new Area(area.X, area.Y, (ushort)(raw - area.X), area.Height);
                 var isAreaLeftDone = false;
-                Area areaRight = new Area(raw + 1, area.Y, area.Width - (raw - area.X) - 1, area.Height);
+                Area areaRight = new Area((ushort)(raw + 1), area.Y, (ushort)(area.Width - (raw - area.X) - 1), area.Height);
                 var isAreaRightDone = false;
 
                 if (areaLeft.Width == 2 && areaLeft.Height == 2)
@@ -61,7 +58,7 @@ namespace MazeGenerator
                 if (isAreaLeftDone && isAreaRightDone) { }
                 else
                 {
-                    walls = GetHeightWalls(maze, area, raw);
+                    DrawHeightWalls(maze, area, raw);
                 }
 
                 if (!isAreaLeftDone && areaLeft.Width >= 2)
@@ -75,11 +72,10 @@ namespace MazeGenerator
             }
             else
             {
-                List<int> possibilities = GetPossibilitiesForHeight(maze, area);
-                var raw = possibilities[rand.Next(possibilities.Count() -1)];
-                Area areaUp = new Area(area.X, area.Y, area.Width, raw - area.Y);
+                var raw = GetPossibilitiesForHeight(maze, area);
+                Area areaUp = new Area(area.X, area.Y, area.Width, (ushort)(raw - area.Y));
                 var isAreaUpDone = false;
-                Area areaDown = new Area(area.X, raw + 1, area.Width, area.Height - (raw - area.Y) - 1);
+                Area areaDown = new Area(area.X, (ushort)(raw + 1), area.Width, (ushort)(area.Height - (raw - area.Y) - 1));
                 var isAreaDownDone = false;
 
                 if (areaUp.Width == 2 && areaUp.Height == 2)
@@ -106,7 +102,7 @@ namespace MazeGenerator
                 if (isAreaDownDone && isAreaUpDone) { }
                 else
                 {
-                    walls = GetWidthWalls(maze, area, raw);
+                    DrawWidthWalls(maze, area, raw);
                 }
 
                 if (!isAreaUpDone && areaUp.Height >= 2)
@@ -119,20 +115,15 @@ namespace MazeGenerator
                 }
             }
 
-            foreach ((int x, int y) in walls)
+            if (todo.Count == 2 && area.Height + area.Width > 40)
             {
-                maze.Board[y, x] = CaseType.Wall;
-            }
-
-            if (todo.Count == 2)
-            {
-                Parallel.Invoke(() => Generate(maze, todo.First()), () => Generate(maze, todo.Last()));
+                Parallel.Invoke(() => Generate(todo.First()), () => Generate(todo.Last()));
             }
             else
             {
-                foreach (var areaToProcess in todo)
+                foreach (var item in todo)
                 {
-                    Generate(maze, areaToProcess);
+                    Generate(item);
                 }
             }
         }
@@ -143,7 +134,7 @@ namespace MazeGenerator
 
             if (possibilities.Any())
             {
-                (int x , int y) = possibilities[rand.Next(possibilities.Count() - 1)];
+                (int x, int y) = possibilities[rand.Next(possibilities.Count() - 1)];
                 maze.Board[y, x] = CaseType.Wall;
             }
         }
@@ -217,10 +208,10 @@ namespace MazeGenerator
             return possibilities;
         }
 
-        public static List<int> GetPossibilitiesForWidth(Maze maze, Area area)
+        public ushort GetPossibilitiesForWidth(Maze maze, Area area)
         {
-            var possibilities = new List<int>();
-            for (int x = area.X + 1; x < area.X + area.Width - 1; x++)
+            var possibilities = new List<ushort>();
+            for (ushort x = (ushort)(area.X + 1); x < area.X + area.Width - 1; x++)
             {
                 if (maze[area.Y - 1, x] == CaseType.Wall || maze[area.Y + area.Height, x] == CaseType.Wall)
                 {
@@ -230,16 +221,16 @@ namespace MazeGenerator
             if (!possibilities.Any())
             {
                 possibilities.Add(area.X);
-                possibilities.Add(area.X + area.Width - 1);
+                possibilities.Add((ushort)(area.X + area.Width - 1));
             }
 
-            return possibilities;
+            return possibilities[this.rand.Next() % possibilities.Count()];
         }
 
-        public static List<int> GetPossibilitiesForHeight(Maze maze, Area area)
+        public ushort GetPossibilitiesForHeight(Maze maze, Area area)
         {
-            var possibilities = new List<int>();
-            for (int y = area.Y + 1; y < area.Y + area.Height - 1; y++)
+            var possibilities = new List<ushort>();
+            for (ushort y = (ushort)(area.Y + 1); y < area.Y + area.Height - 1; y++)
             {
                 if (maze[y, area.X - 1] == CaseType.Wall || maze[y, area.X + area.Width] == CaseType.Wall)
                 {
@@ -249,31 +240,31 @@ namespace MazeGenerator
             if (!possibilities.Any())
             {
                 possibilities.Add(area.Y);
-                possibilities.Add(area.Y + area.Height - 1);
+                possibilities.Add((ushort)(area.Y + area.Height - 1));
             }
 
-            return possibilities;
+            return possibilities[this.rand.Next(possibilities.Count() - 1)];
         }
 
-        public List<(int x, int y)> GetHeightWalls(Maze maze, Area area, int x)
+        public void DrawHeightWalls(Maze maze, Area area, ushort x)
         {
-            List<(int x, int y)> walls = new List<(int x, int y)>();
+            List<ushort> walls = new List<ushort>();
 
             if (maze[area.Y - 1, x] == CaseType.Wall && !IsCaseAgainWallWithHole(maze, area, x, area.Y))
             {
-                walls.Add((x, area.Y));
+                walls.Add(area.Y);
             }
 
             if (maze[area.Y + area.Height, x] == CaseType.Wall && !IsCaseAgainWallWithHole(maze, area, x, area.Y + area.Height - 1))
             {
-                walls.Add((x, area.Y + area.Height - 1));
+                walls.Add((ushort)(area.Y + area.Height - 1));
             }
 
-            for (int y = area.Y + 1; y < area.Y + area.Height - 1; y++)
+            for (ushort y = (ushort)(area.Y + 1); y < area.Y + area.Height - 1; y++)
             {
                 if (!IsCaseAgainWallWithHole(maze, area, x, y))
                 {
-                    walls.Add((x, y));
+                    walls.Add(y);
                 }
             }
 
@@ -282,7 +273,10 @@ namespace MazeGenerator
                 walls.Remove(walls[rand.Next(walls.Count() - 1)]);
             }
 
-            return walls;
+            foreach (ushort y in walls)
+            {
+                maze.Board[y, x] = CaseType.Wall;
+            }
         }
 
         private static bool IsCaseAgainWallWithHole(Maze maze, Area area, int x, int y)
@@ -291,12 +285,12 @@ namespace MazeGenerator
                   (x == area.X + area.Width - 1 && maze[y, x + 1] != CaseType.Wall);
         }
 
-        public List<(int x, int y)> GetWidthWalls(Maze maze, Area area, int y)
+        public void DrawWidthWalls(Maze maze, Area area, ushort y)
         {
-            List<(int x, int y)> walls = new List<(int x, int y)>();
+            List<ushort> walls = new List<ushort>();
             var holeNeeded = true;
 
-            for (int x = area.X; x < area.X + area.Width; x++)
+            for (ushort x = area.X; x < area.X + area.Width; x++)
             {
                 if (y == area.Y && maze[y - 1, x] != CaseType.Wall)
                 {
@@ -308,18 +302,18 @@ namespace MazeGenerator
                 }
                 else
                 {
-                    walls.Add((x, y));
+                    walls.Add(x);
                 }
             }
 
             if (walls.Any())
             {
 
-                if (maze[y, area.X - 1] == CaseType.Unknow && walls.First() == (area.X, y))
+                if (maze[y, area.X - 1] == CaseType.Unknow && walls.First() == area.X)
                 {
                     walls.Remove(walls.First());
                 }
-                else if (maze[y, area.X + area.Width] == CaseType.Unknow && walls.Last() == (area.X + area.Width - 1, y))
+                else if (maze[y, area.X + area.Width] == CaseType.Unknow && walls.Last() == area.X + area.Width - 1)
                 {
                     walls.Remove(walls.Last());
                 }
@@ -329,17 +323,19 @@ namespace MazeGenerator
                 }
             }
 
-            return walls;
+            foreach (ushort x in walls)
+            {
+                maze.Board[y, x] = CaseType.Wall;
+            }
         }
 
-        internal Maze Generate(Dimension dimension)
+        internal Maze Generate()
         {
-            var maze = Maze.Build(dimension);
             maze.FillBoarderWith(CaseType.Wall);
-            var entrance = (0, 1);
-            var exit = (maze.Dimension.X - 1, maze.Dimension.Y - 2);
+            var entrance = ((ushort)0, (ushort)1);
+            var exit = ((ushort)(maze.Dimension.X - 1), (ushort)(maze.Dimension.Y - 2));
             OpenEntranceAndExit(maze, entrance, exit);
-            Generate(maze, new Area(1, 1, maze.Dimension.X - 2, maze.Dimension.Y - 2));
+            Generate(new Area(1, 1, (ushort)(maze.Dimension.X - 2), (ushort)(maze.Dimension.Y - 2)));
             SetAllUnknowToPath(maze);
             return maze;
         }
@@ -358,7 +354,7 @@ namespace MazeGenerator
             }
         }
 
-        private void OpenEntranceAndExit(Maze maze, (int x, int y) entrance, (int x, int y) exit)
+        private void OpenEntranceAndExit(Maze maze, (ushort x, ushort y) entrance, (ushort x, ushort y) exit)
         {
             maze.Board[entrance.y, entrance.x] = CaseType.Unknow;
             maze.Entrance = entrance;
