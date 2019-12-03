@@ -20,7 +20,7 @@ Welcome to my maze generator and solver it's just little time that I spent to re
                 <option value=@GeneratorType.RecursiveSplit>@GeneratorType.RecursiveSplit.ToString()</option>
             </select>
         </p>
-<button disabled="@DoStuff" @onclick="CreateMaze">Generate</button>
+        <button disabled="@DoStuff" @onclick="CreateMaze">Generate</button>
         <button disabled="@DoStuff" @onclick="SolveMaze">Solve</button>
     </div>
     <canvas id="@canvasId"></canvas>

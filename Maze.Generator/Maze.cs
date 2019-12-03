@@ -50,7 +50,7 @@ namespace MazeGenerator
         }
     }
 
-    public enum CaseType
+    public enum CaseType : byte
     {
         Unknow,
         Path,

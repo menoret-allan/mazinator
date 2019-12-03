@@ -9,21 +9,29 @@ namespace Maze.Console
     {
         static void Main(string[] args)
         {
-            //SpeedTest();
-            SplitMazeGeneratorTest();
+            SpeedTest();
+            //SplitMazeGeneratorTest();
         }
 
         static void SpeedTest()
         {
             var cases = new List<Case> {
-                new Case { Width = 10, Height = 10, Repeat = 10000 },
-                new Case { Width = 100, Height = 50, Repeat = 2000 },
-                new Case { Width = 50, Height = 100, Repeat = 2000 },
-                new Case { Width = 100, Height = 100, Repeat = 1000 },
-                new Case { Width = 1000, Height = 1000, Repeat = 10 },
+                new Case { Width = 10, Height = 10, Repeat = 10000, GeneratorType = GeneratorType.RecursiveSplit },
+                new Case { Width = 100, Height = 50, Repeat = 2000, GeneratorType = GeneratorType.RecursiveSplit },
+                new Case { Width = 50, Height = 100, Repeat = 2000, GeneratorType = GeneratorType.RecursiveSplit },
+                new Case { Width = 100, Height = 100, Repeat = 1000, GeneratorType = GeneratorType.RecursiveSplit },
+                new Case { Width = 1000, Height = 1000, Repeat = 10, GeneratorType = GeneratorType.RecursiveSplit },
+                new Case { Width = 10000, Height = 10000, Repeat = 10, GeneratorType = GeneratorType.RecursiveSplit },
+                //new Case { Width = 10, Height = 10, Repeat = 10000, GeneratorType = GeneratorType.Random },
+                //new Case { Width = 100, Height = 50, Repeat = 2000, GeneratorType = GeneratorType.Random},
+                //new Case { Width = 50, Height = 100, Repeat = 2000, GeneratorType = GeneratorType.Random},
+                //new Case { Width = 100, Height = 100, Repeat = 1000, GeneratorType = GeneratorType.Random},
+                //new Case { Width = 1000, Height = 1000, Repeat = 10, GeneratorType = GeneratorType.Random},
             };
             var rand = new Rand(new Random());
             var test = new Generator(rand);
+
+            System.Console.WriteLine("Starting the speedtest:");
 
             foreach (var item in cases)
             {
@@ -31,7 +39,7 @@ namespace Maze.Console
 
                 for (int i = 0; i < item.Repeat; i++)
                 {
-                    var maze = test.Generate(item.Width, item.Height, GeneratorType.Random);
+                    var maze = test.Generate(item.Width, item.Height, item.GeneratorType);
                 }
 
                 watch.Stop();
@@ -58,9 +66,10 @@ namespace Maze.Console
         public int Height { get; set; }
         public int Repeat { get; set; }
         public long Result { get; set; }
+        public GeneratorType GeneratorType { get; set; }
         public override string ToString()
         {
-            return $"Test: {Width}x{Height} - {Repeat} time => {Result}";
+            return $"Test ({GeneratorType.ToString()}): {Width}x{Height} - {Repeat} time => {Result}";
         }
     }
 }
