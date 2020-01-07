@@ -2,6 +2,8 @@
 
 # Maze generator (mostly to play with property testing on an existing algorythm that need changes)
 
+The blazor app is deploy on [my personal website](https://maze.allanmenoret.com/)
+
 [WIKI for maze generation](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
 
 I play around to generate a perfect maze with a random algo.
