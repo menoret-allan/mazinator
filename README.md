@@ -1,4 +1,4 @@
-
+[![Build and Deployment](https://github.com/menoret-allan/mazinator/workflows/Build%20and%20Deploy/badge.svg)](https://github.com/menoret-allan/mazinator/actions)
 
 # Maze generator (mostly to play with property testing on an existing algorythm that need changes)
 
