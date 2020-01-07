@@ -5,7 +5,13 @@
 
 <h1>Maze me ;)</h1>
 
-Welcome to my maze generator and solver it's just little time that I spent to remember the old time at school.
+<span>
+    Welcome to my maze generator and solver (#brutForce).
+</span>
+<span>
+    It's a little pet project to test out some stuff with property testing and I made a small UI to have a visual.
+    The method of generation has quite an impact on the maze shape.
+</span>
 
 <div>
     <div>
@@ -31,9 +37,9 @@ Welcome to my maze generator and solver it's just little time that I spent to re
     private int height = 42;
     private int numberOfPixelPerCase = 8;
     private int mazeNumberOfPixelPerCase = 8;
-    private int numberOfMillisecondPerMove = 250;
+    private int numberOfMillisecondPerMove = 50;
     private readonly string canvasId = "canvasId";
-    private GeneratorType generatorType = GeneratorType.Random;
+    private GeneratorType generatorType = GeneratorType.RecursiveSplit;
     private MazeGenerator.Maze maze;
     private bool MazeProcessRunning = false;
     private bool MazeCanBeSolve = false;
