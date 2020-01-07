@@ -20,8 +20,8 @@ Welcome to my maze generator and solver it's just little time that I spent to re
                 <option value=@GeneratorType.RecursiveSplit>@GeneratorType.RecursiveSplit.ToString()</option>
             </select>
         </p>
-        <button disabled="@DoStuff" @onclick="CreateMaze">Generate</button>
-        <button disabled="@DoStuff" @onclick="SolveMaze">Solve</button>
+        <button disabled="@MazeProcessRunning" @onclick="CreateMaze">Generate</button>
+        <button disabled="@SolvingDiseabled" @onclick="SolveMaze">Solve</button>
     </div>
     <canvas id="@canvasId"></canvas>
 </div>
@@ -35,12 +35,15 @@ Welcome to my maze generator and solver it's just little time that I spent to re
     private readonly string canvasId = "canvasId";
     private GeneratorType generatorType = GeneratorType.Random;
     private MazeGenerator.Maze maze;
-    private bool DoStuff = false;
+    private bool MazeProcessRunning = false;
+    private bool MazeCanBeSolve = false;
+    private bool SolvingDiseabled => MazeProcessRunning || !MazeCanBeSolve;
+
 
     public async Task<bool> CreateMaze()
     {
-        if (this.DoStuff) return false;
-        this.DoStuff = true;
+        if (this.MazeProcessRunning) return false;
+        this.MazeProcessRunning = true;
 
         if (this.width >= 3 && this.height >= 3 && numberOfPixelPerCase >= 1)
         {
@@ -66,21 +69,23 @@ Welcome to my maze generator and solver it's just little time that I spent to re
             result = await JSRuntime
                 .InvokeAsync<bool>("drawMaze",
                 new { id = this.canvasId, map = mazeMap.Select(i => new { x = i.x, y = i.y, width = i.width, height = i.height, color = i.color }).ToList() });
+            MazeCanBeSolve = true;
         }
         else
         {
             Console.WriteLine("Nope nope nope! height >= 3 && width >= 3 && pixel >= 1");
         }
 
-        DoStuff = false;
+        MazeProcessRunning = false;
         return true;
 
     }
 
     public async Task<bool> SolveMaze()
     {
-        if (this.DoStuff) return false;
-        this.DoStuff = true;
+        if (this.MazeProcessRunning) return false;
+        this.MazeProcessRunning = true;
+        MazeCanBeSolve = false;
         var solver = new SolverPerfectMaze(this.maze);
 
         foreach (var next in solver.NextStep())
@@ -99,7 +104,7 @@ Welcome to my maze generator and solver it's just little time that I spent to re
                     color = GetColor(next.newState),
                 });
         }
-        DoStuff = false;
+        MazeProcessRunning = false;
         return true;
     }
 
