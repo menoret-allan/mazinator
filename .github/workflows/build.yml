@@ -1,0 +1,35 @@
+
+name: Build and Deploy
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+    - name: Tests
+      run: dotnet test
+    - name: Publish
+      run: dotnet publish --configuration Release Maze.Front/Maze.Front.csproj
+    - name: Zip the publication
+      run: zip -r mydeploy.zip /home/runner/work/mazinator/mazinator/Maze.Front/bin/Release/netstandard2.0/publish/Maze.Front/dist
+    - name: Trigger deployment on Netifly
+      run: |
+        curl \
+        --url https://api.netlify.com/api/v1/sites/${{ secrets.Site_Id }}/deploys \
+        --header 'Authorization: Bearer ${{ secrets.Netilify_Token_Mazinator }}' \
+        --header 'Content-Type: application/zip' \
+        --data-binary "@mydeploy.zip"
+
+
+
+
+
+
