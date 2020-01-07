@@ -27,8 +27,7 @@ namespace Maze.Tests
         }
 
         [Theory]
-        //[MemberData(nameof(GenerateSeeAndMazeType), NumberOfIteration)]
-        [InlineData(1015014289, GeneratorType.RecursiveSplit)]
+        [MemberData(nameof(GenerateSeeAndMazeType), NumberOfIteration)]
         public void ShouldHave2BlocksOfWall(int seed, GeneratorType generatorType)
         {
             var rand = new Rand(new Random(seed));
@@ -38,8 +37,6 @@ namespace Maze.Tests
             var height = rand.Next() % 50 + 50;
 
             var maze = generator.Generate(width, height, generatorType);
-            //var img = MazeToImage.Convert(maze, 8);
-            //img.Save($"test-2wallblock{iteration}.jpg");
 
             maze.AssertThatWallAreSplittedIn2Blocks();
         }
@@ -60,7 +57,6 @@ namespace Maze.Tests
 
         [Theory]
         [MemberData(nameof(GenerateSeeAndMazeType), NumberOfIteration)]
-        //[InlineData(4550669, GeneratorType.RecursiveSplit)]
         public void MazeGeneratorShouldGenerateMazeWithEnytranceLinkedWithPathToTheExit(int seed, GeneratorType generatorType)
         {
             var rand = new Rand(new Random(seed));
